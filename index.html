@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biological Macromolecules Part 2 — Nucleic Acids & Proteins</title>
+<style>
+:root{
+  --bg:#f5f7fb;--card:#ffffff;--ink:#172033;--muted:#5f6b7a;--accent:#2f6fed;
+  --accent2:#6c4ee3;--good:#198754;--bad:#c0392b;--warn:#b7791f;--line:#d9e1ec;
+  --soft:#eef4ff;--shadow:0 10px 30px rgba(28,49,86,.08);--radius:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.wrap{max-width:1180px;margin:auto;padding:0 18px}
+.brandrow{display:flex;align-items:center;gap:14px;padding:12px 0}
+.brand{font-weight:800;letter-spacing:-.02em}
+.badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;background:var(--soft);color:var(--accent);font-size:.82rem;font-weight:700}
+.nav{display:flex;gap:6px;overflow:auto;padding:0 0 10px}
+.nav button{border:0;background:transparent;padding:8px 11px;border-radius:10px;color:var(--muted);white-space:nowrap}
+.nav button.active,.nav button:hover{background:var(--soft);color:var(--accent)}
+.progress-shell{height:7px;background:#e9edf5}
+.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.35s}
+main{padding:24px 0 50px}
+.page{display:none}
+.page.active{display:block}
+.hero{background:linear-gradient(135deg,#162342,#2d4f9d);color:white;border-radius:26px;padding:34px;box-shadow:var(--shadow)}
+.hero h1{margin:.2rem 0;font-size:clamp(2rem,4vw,3.6rem);line-height:1.05}
+.hero p{max-width:760px;color:#e9efff}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.card h2,.card h3{margin-top:0}
+.kpi{border-left:5px solid var(--accent)}
+.small{font-size:.92rem;color:var(--muted)}
+.key{background:#fff8dd;border:1px solid #f2dd8a;border-radius:14px;padding:12px 14px}
+.mistake{background:#fff1ef;border:1px solid #f0c1ba;border-radius:14px;padding:12px 14px}
+.ap-tip{background:#f4f0ff;border:1px solid #d8cdfc;border-radius:14px;padding:12px 14px}
+.feedback{display:none;margin-top:10px;padding:10px 12px;border-radius:12px}
+.feedback.good{display:block;background:#e8f7ef;color:#0c6b3f}
+.feedback.bad{display:block;background:#fdecea;color:#9f2d20}
+.q{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.q label{display:block;margin:7px 0}
+.inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{border:0;border-radius:11px;padding:10px 14px;background:var(--accent);color:white;font-weight:700}
+.btn.secondary{background:#edf2fb;color:#26354f}
+.btn.good{background:var(--good)}
+.btn.warn{background:var(--warn)}
+.btn.bad{background:var(--bad)}
+.btn.ghost{background:white;color:var(--ink);border:1px solid var(--line)}
+.section-title{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;margin:26px 0 12px}
+.section-title h2{margin:0}
+.pillrow{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:6px 10px;border-radius:999px;background:#eef2f8;font-size:.86rem}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#f7f9fc}
+.scroll{overflow:auto}
+.vocab{display:flex;flex-wrap:wrap;gap:8px}
+.vocab span{background:#f0f4fb;padding:6px 9px;border-radius:9px;font-size:.9rem}
+.visual{background:#fafcff;border:1px solid var(--line);border-radius:16px;padding:12px;overflow:auto}
+svg{max-width:100%;height:auto}
+.hotspot{cursor:pointer;transition:.2s}
+.hotspot:hover{filter:brightness(.96)}
+.label-bank{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.label-chip{padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:white;cursor:pointer}
+.label-chip.selected{outline:3px solid #a9c6ff}
+.target{cursor:pointer}
+.target text{pointer-events:none}
+.hidden{display:none!important}
+.accordion summary{font-weight:800;cursor:pointer}
+.accordion{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;margin:10px 0}
+.sim-stage{display:none}
+.sim-stage.active{display:block}
+.stepdots{display:flex;gap:6px;flex-wrap:wrap}
+.stepdot{width:12px;height:12px;border-radius:50%;background:#d8dfeb}
+.stepdot.active{background:var(--accent)}
+.level{border-top:5px solid #9db7e8}
+.level.l2{border-color:#8fc9ae}
+.level.l3{border-color:#c2a6f6}
+.stimulus{border-left:4px solid var(--accent2);padding-left:14px}
+textarea{width:100%;min-height:110px;padding:10px;border:1px solid var(--line);border-radius:10px;background:white}
+input[type="text"],input[type="number"],input[type="password"],select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:white}
+.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.scorebox{font-size:1.4rem;font-weight:800}
+.metric{padding:14px;border-radius:14px;background:#f7f9fd;border:1px solid var(--line)}
+.metric b{display:block;font-size:1.35rem}
+.chartbar{height:10px;background:#e9edf4;border-radius:20px;overflow:hidden}
+.chartbar > span{display:block;height:100%;background:var(--accent)}
+.navfoot{display:flex;justify-content:space-between;gap:10px;margin-top:24px}
+.toast{position:fixed;right:16px;bottom:16px;background:#172033;color:#fff;padding:12px 14px;border-radius:12px;display:none;z-index:50}
+.codehint{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3f5f8;padding:2px 5px;border-radius:6px}
+@media(max-width:850px){.g2,.g3,.formgrid{grid-template-columns:1fr}.hero{padding:24px}.wrap{padding:0 12px}}
+@media print {.topbar,.navfoot,.no-print{display:none!important} body{background:white}.page{display:block!important}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="wrap">
+    <div class="brandrow">
+      <div class="brand">Biological Macromolecules — Part 2</div>
+      <span class="badge">Nucleic Acids & Proteins</span>
+      <span class="badge" id="progressText">0% complete</span>
+    </div>
+    <div class="nav" id="nav">
+      <button data-page="home" class="active">Home</button>
+      <button data-page="learn">Learn</button>
+      <button data-page="simulation">Simulation</button>
+      <button data-page="practice">Practice</button>
+      <button data-page="ap">AP Challenge</button>
+      <button data-page="assessment">Mini Assessment</button>
+      <button data-page="results">Results</button>
+      <button data-page="teacher">Teacher Mode</button>
+    </div>
+  </div>
+  <div class="progress-shell"><div class="progress" id="progressBar"></div></div>
+</div>
+
+<main class="wrap">
+
+<section id="home" class="page active">
+  <div class="hero">
+    <span class="badge" style="background:#ffffff22;color:white">Self-study lesson</span>
+    <h1>Nucleic Acids & Proteins</h1>
+    <p>Explore how nucleotide chemistry supports genetic information and how amino-acid sequence drives protein shape and function. Read, interact, predict, practise, and then complete the mini-assessment.</p>
+    <div class="pillrow">
+      <span class="pill" style="background:#ffffff1c;color:white">Estimated time: 75–100 min</span>
+      <span class="pill" style="background:#ffffff1c;color:white">AP Biology reasoning included</span>
+      <span class="pill" style="background:#ffffff1c;color:white">Works offline</span>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card kpi">
+      <h2>Learning objectives / KPIs</h2>
+      <ol>
+        <li><b>1.3.13–1.3.20:</b> Explain nucleic-acid roles, model nucleotides, phosphodiester bonds, 5′→3′ directionality, antiparallel DNA, Chargaff’s rules, and DNA–RNA differences.</li>
+        <li><b>1.3.21–1.3.25:</b> Analyze protein functions, amino-acid/R-group chemistry, peptide-bond formation, N→C directionality, and primary through quaternary structure.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>How to use this lesson</h2>
+      <ol>
+        <li>Read each information section.</li><li>Study the diagrams and models.</li><li>Complete the interactive activities.</li>
+        <li>Answer the practice questions.</li><li>Read the feedback provided.</li><li>Complete the mini-assessment at the end.</li>
+      </ol>
+      <div class="key"><b>Lesson progress:</b> 0% → 25% → 50% → 75% → Complete</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>Key vocabulary</h2>
+    <div class="vocab">
+      <span><b>nucleotide</b></span><span><b>purine</b></span><span><b>pyrimidine</b></span><span><b>phosphodiester bond</b></span>
+      <span><b>antiparallel</b></span><span><b>complementary</b></span><span><b>5′ end</b></span><span><b>3′ end</b></span>
+      <span><b>amino acid</b></span><span><b>R group</b></span><span><b>peptide bond</b></span><span><b>N-terminus</b></span>
+      <span><b>C-terminus</b></span><span><b>denaturation</b></span><span><b>tertiary structure</b></span>
+    </div>
+  </div>
+
+  <div class="navfoot"><span></span><button class="btn" onclick="go('learn')">Start Lesson →</button></div>
+</section>
+
+<section id="learn" class="page">
+  <div class="section-title"><div><h2>Learn</h2><div class="small">Read each card, interact with the visuals, then complete the checks.</div></div><span class="badge">Formative — retry allowed</span></div>
+
+  <div class="card">
+    <h2>1. Nucleic acids: information molecules</h2>
+    <p><b>DNA</b> and <b>RNA</b> store, transmit, and help express hereditary information. DNA is mainly the long-term information archive, while RNA helps transfer, regulate, and use that information during gene expression and protein synthesis.</p>
+    <div class="key"><b>Remember:</b> DNA → RNA → protein describes the usual flow of sequence information during gene expression.</div>
+    <div class="q" data-check="learn1">
+      <b>Check your understanding:</b> Which statement best explains why RNA is essential even though DNA stores genetic information?
+      <label><input type="radio" name="l1" value="a"> RNA permanently replaces DNA after transcription.</label>
+      <label><input type="radio" name="l1" value="b"> RNA helps transfer and use genetic information during gene expression.</label>
+      <label><input type="radio" name="l1" value="c"> RNA is always more stable than DNA.</label>
+      <button class="btn" onclick="formative('l1','b','fb-l1','Correct. RNA acts as a working intermediary and can also have structural, catalytic, and regulatory roles.','Try again. Focus on how RNA helps cells use information stored in DNA.')">Check</button>
+      <div id="fb-l1" class="feedback"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card">
+      <h2>2. Build a nucleotide</h2>
+      <p>Every <b>nucleotide</b> contains a <b>nitrogenous base</b>, a <b>5-carbon sugar</b>, and a <b>phosphate group</b>. DNA uses deoxyribose; RNA uses ribose.</p>
+      <div class="visual">
+        <svg viewBox="0 0 680 250" aria-label="nucleotide model">
+          <circle cx="125" cy="120" r="55" fill="#e7f0ff" stroke="#2f6fed" stroke-width="3"/>
+          <text x="125" y="115" text-anchor="middle" font-weight="700">Phosphate</text><text x="125" y="138" text-anchor="middle">group</text>
+          <line x1="180" y1="120" x2="255" y2="120" stroke="#60708c" stroke-width="5"/>
+          <polygon points="320,65 375,105 355,175 285,175 265,105" fill="#efeaff" stroke="#6c4ee3" stroke-width="3"/>
+          <text x="320" y="118" text-anchor="middle" font-weight="700">5-carbon</text><text x="320" y="140" text-anchor="middle">sugar</text>
+          <line x1="375" y1="118" x2="455" y2="118" stroke="#60708c" stroke-width="5"/>
+          <rect x="455" y="75" width="150" height="90" rx="16" fill="#e8f7ef" stroke="#198754" stroke-width="3"/>
+          <text x="530" y="115" text-anchor="middle" font-weight="700">Nitrogenous</text><text x="530" y="138" text-anchor="middle">base</text>
+        </svg>
+      </div>
+      <div class="mistake"><b>Common mistake:</b> the nitrogenous base is attached to the sugar; it is not part of the repeating sugar–phosphate backbone.</div>
+    </div>
+
+    <div class="card">
+      <h2>Purines vs pyrimidines</h2>
+      <div class="scroll"><table>
+        <tr><th>Feature</th><th>Purines</th><th>Pyrimidines</th></tr>
+        <tr><td>Ring structure</td><td>Two fused rings</td><td>One ring</td></tr>
+        <tr><td>Bases</td><td>A, G</td><td>C, T, U</td></tr>
+        <tr><td>Memory cue</td><td>Pure As Gold</td><td>CUT the PY</td></tr>
+      </table></div>
+      <div class="q">
+        <b>Which pairing preserves a consistent DNA helix width?</b>
+        <select id="purineSelect"><option value="">Choose...</option><option value="pp">purine + purine</option><option value="py">purine + pyrimidine</option><option value="yy">pyrimidine + pyrimidine</option></select>
+        <div class="inline-actions"><button class="btn" onclick="selectCheck('purineSelect','py','fb-purine','Correct. A larger two-ring purine pairs with a smaller one-ring pyrimidine.','Try again. Compare the relative sizes of the two base classes.')">Check</button></div>
+        <div id="fb-purine" class="feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>3. Phosphodiester bonds and 5′→3′ directionality</h2>
+    <p>A <b>phosphodiester bond</b> is a strong covalent linkage connecting the <b>3′ carbon/3′ OH</b> of one sugar to the <b>5′ phosphate</b> of the next nucleotide. Repeating linkages form the sugar–phosphate backbone.</p>
+    <p>During nucleic-acid polymerization, the incoming nucleotide arrives as a nucleotide triphosphate. Its addition occurs at the <b>3′ OH</b> of the growing strand, so the new strand extends in the <b>5′→3′ direction</b>.</p>
+    <div class="visual">
+      <svg viewBox="0 0 900 260">
+        <text x="45" y="35" font-weight="700">5′</text>
+        <g transform="translate(70,80)">
+          <circle cx="0" cy="50" r="34" fill="#e7f0ff" stroke="#2f6fed" stroke-width="3"/><text x="0" y="55" text-anchor="middle">P</text>
+          <polygon points="95,15 130,40 117,83 73,83 60,40" fill="#efeaff" stroke="#6c4ee3" stroke-width="3"/><text x="95" y="57" text-anchor="middle">S</text>
+          <circle cx="190" cy="50" r="34" fill="#e7f0ff" stroke="#2f6fed" stroke-width="3"/><text x="190" y="55" text-anchor="middle">P</text>
+          <polygon points="285,15 320,40 307,83 263,83 250,40" fill="#efeaff" stroke="#6c4ee3" stroke-width="3"/><text x="285" y="57" text-anchor="middle">S</text>
+          <circle cx="380" cy="50" r="34" fill="#e7f0ff" stroke="#2f6fed" stroke-width="3"/><text x="380" y="55" text-anchor="middle">P</text>
+          <polygon points="475,15 510,40 497,83 453,83 440,40" fill="#efeaff" stroke="#6c4ee3" stroke-width="3"/><text x="475" y="57" text-anchor="middle">S</text>
+          <line x1="35" y1="50" x2="60" y2="50" stroke="#172033" stroke-width="4"/><line x1="130" y1="50" x2="156" y2="50" stroke="#172033" stroke-width="4"/>
+          <line x1="224" y1="50" x2="250" y2="50" stroke="#172033" stroke-width="4"/><line x1="320" y1="50" x2="346" y2="50" stroke="#172033" stroke-width="4"/>
+          <line x1="414" y1="50" x2="440" y2="50" stroke="#172033" stroke-width="4"/>
+          <text x="520" y="58" font-weight="700">3′–OH</text>
+          <path d="M540,80 C610,140 655,150 735,100" fill="none" stroke="#2f6fed" stroke-width="5" marker-end="url(#arr)"/>
+          <circle cx="755" cy="80" r="30" fill="#e7f0ff" stroke="#2f6fed" stroke-width="3"/><text x="755" y="85" text-anchor="middle">P</text>
+          <text x="755" y="130" text-anchor="middle">incoming dNTP</text>
+        </g>
+        <defs><marker id="arr" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2f6fed"/></marker></defs>
+      </svg>
+    </div>
+    <div class="ap-tip"><b>AP tip:</b> If asked why synthesis has directionality, connect the answer to the chemical requirement for an available 3′ OH, not simply to memorized arrows.</div>
+    <div class="q">
+      <b>Fill in the concept:</b> New nucleotides are added to the <select id="dirSelect" style="max-width:200px;display:inline-block"><option value="">...</option><option value="5">5′ phosphate</option><option value="3">3′ OH</option></select> of the growing strand.
+      <button class="btn" onclick="selectCheck('dirSelect','3','fb-dir','Correct. Addition to the 3′ OH makes the new strand grow 5′→3′.','Try again. Which hydroxyl group participates in formation of the next phosphodiester bond?')">Check</button>
+      <div id="fb-dir" class="feedback"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card">
+      <h2>4. Antiparallel DNA and complementary base pairing</h2>
+      <p>DNA strands run in opposite directions: one is 5′→3′ and the other is 3′→5′. Complementary bases pair through hydrogen bonds: <b>A–T = 2</b> and <b>G–C = 3</b>.</p>
+      <div class="visual">
+        <svg viewBox="0 0 620 310">
+          <text x="60" y="35" font-weight="700">5′</text><text x="535" y="35" font-weight="700">3′</text>
+          <text x="60" y="285" font-weight="700">3′</text><text x="535" y="285" font-weight="700">5′</text>
+          <line x1="95" y1="55" x2="500" y2="55" stroke="#6c4ee3" stroke-width="8"/>
+          <line x1="95" y1="260" x2="500" y2="260" stroke="#6c4ee3" stroke-width="8"/>
+          <g font-weight="700" text-anchor="middle">
+          <text x="145" y="95">A</text><text x="145" y="228">T</text>
+          <text x="245" y="95">G</text><text x="245" y="228">C</text>
+          <text x="345" y="95">T</text><text x="345" y="228">A</text>
+          <text x="445" y="95">C</text><text x="445" y="228">G</text>
+          </g>
+          <g stroke="#5f6b7a" stroke-dasharray="6 6" stroke-width="3">
+            <line x1="145" y1="110" x2="145" y2="210"/><line x1="245" y1="110" x2="245" y2="210"/>
+            <line x1="345" y1="110" x2="345" y2="210"/><line x1="445" y1="110" x2="445" y2="210"/>
+          </g>
+        </svg>
+      </div>
+      <div class="q">
+        <b>Hydrogen-bond calculation:</b> For 5′–ACAGTG–3′ paired with its complement, how many hydrogen bonds form?
+        <input id="hb" type="number" min="0">
+        <button class="btn" onclick="numberCheck('hb',15,'fb-hb','Correct: A–T contributes 2 bonds and G–C contributes 3, for 15 total.','Recount each base pair: A/T = 2; G/C = 3.')">Check</button>
+        <div id="fb-hb" class="feedback"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>5. Chargaff’s rules</h2>
+      <p>In double-stranded DNA, <b>%A = %T</b>, <b>%G = %C</b>, and all four bases total 100%.</p>
+      <div class="key"><b>Worked example:</b> If C = 18%, then G = 18%. G + C = 36%, leaving 64% for A + T, so A = 32% and T = 32%.</div>
+      <div class="q">
+        <b>A DNA molecule contains 1,000 nucleotides, including 200 G. How many A nucleotides?</b>
+        <input id="chargaff" type="number">
+        <button class="btn" onclick="numberCheck('chargaff',300,'fb-charge','Correct. C is also 200, leaving 600 nucleotides for A + T; therefore A = 300.','Try again. First use G = C, then divide the remaining nucleotides equally between A and T.')">Check</button>
+        <div id="fb-charge" class="feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>6. DNA vs RNA</h2>
+    <div class="scroll"><table>
+      <tr><th>Feature</th><th>DNA</th><th>RNA</th></tr>
+      <tr><td>Sugar</td><td>Deoxyribose; 2′ carbon has H</td><td>Ribose; 2′ carbon has OH</td></tr>
+      <tr><td>Unique base</td><td>Thymine</td><td>Uracil</td></tr>
+      <tr><td>Typical strands</td><td>Double-stranded</td><td>Single-stranded</td></tr>
+      <tr><td>Stability</td><td>More stable</td><td>Less stable / more reactive</td></tr>
+      <tr><td>Role</td><td>Long-term storage/transmission</td><td>Expression, transfer, regulation, use of information</td></tr>
+    </table></div>
+    <div class="mistake"><b>Common misconception:</b> “RNA is weak because it is single-stranded.” The important chemical reason is the <b>2′ OH</b> of ribose, which increases backbone reactivity; strand number also influences protection and repair.</div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>Interactive labelling — nucleotide</h2>
+    <p>Select a label, then tap the matching target. Submit to check. This works with touch screens.</p>
+    <div class="label-bank" id="ntBank">
+      <button class="label-chip" data-label="phosphate" onclick="chooseLabel(this,'nt')">Phosphate group</button>
+      <button class="label-chip" data-label="sugar" onclick="chooseLabel(this,'nt')">5-carbon sugar</button>
+      <button class="label-chip" data-label="base" onclick="chooseLabel(this,'nt')">Nitrogenous base</button>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 700 300">
+        <circle cx="150" cy="150" r="55" fill="#e7f0ff" stroke="#2f6fed" stroke-width="3"/>
+        <polygon points="340,90 400,130 380,205 305,205 285,130" fill="#efeaff" stroke="#6c4ee3" stroke-width="3"/>
+        <rect x="500" y="105" width="140" height="90" rx="15" fill="#e8f7ef" stroke="#198754" stroke-width="3"/>
+        <line x1="205" y1="150" x2="285" y2="150" stroke="#172033" stroke-width="5"/>
+        <line x1="400" y1="150" x2="500" y2="150" stroke="#172033" stroke-width="5"/>
+        <g class="target" data-key="phosphate" onclick="placeLabel(this,'nt')"><rect x="70" y="235" width="165" height="38" rx="9" fill="white" stroke="#9aa9bf"/><text x="152" y="260" text-anchor="middle">Tap target</text></g>
+        <line x1="150" y1="235" x2="150" y2="206" stroke="#9aa9bf" stroke-width="2"/>
+        <g class="target" data-key="sugar" onclick="placeLabel(this,'nt')"><rect x="265" y="235" width="165" height="38" rx="9" fill="white" stroke="#9aa9bf"/><text x="347" y="260" text-anchor="middle">Tap target</text></g>
+        <line x1="347" y1="235" x2="347" y2="206" stroke="#9aa9bf" stroke-width="2"/>
+        <g class="target" data-key="base" onclick="placeLabel(this,'nt')"><rect x="485" y="235" width="165" height="38" rx="9" fill="white" stroke="#9aa9bf"/><text x="567" y="260" text-anchor="middle">Tap target</text></g>
+        <line x1="567" y1="235" x2="567" y2="197" stroke="#9aa9bf" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="inline-actions"><button class="btn" onclick="checkLabels('nt')">Submit</button><button class="btn secondary" onclick="resetLabels('nt')">Reset</button><button class="btn ghost" onclick="showLabels('nt')">Show answer</button></div>
+    <div id="fb-nt" class="feedback"></div>
+  </div>
+
+  <div class="section-title"><div><h2>Protein strand</h2><div class="small">Sequence → shape → function</div></div></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>7. Protein functions</h2>
+      <div class="scroll"><table>
+        <tr><th>Function</th><th>Example</th></tr>
+        <tr><td>Enzymatic</td><td>Amylase, DNA polymerase</td></tr>
+        <tr><td>Structural</td><td>Collagen, keratin</td></tr>
+        <tr><td>Transport</td><td>Hemoglobin, membrane channels</td></tr>
+        <tr><td>Signaling / receptors</td><td>Insulin / insulin receptor</td></tr>
+        <tr><td>Defense</td><td>Antibodies</td></tr>
+        <tr><td>Movement</td><td>Actin and myosin</td></tr>
+        <tr><td>Storage</td><td>Ferritin</td></tr>
+      </table></div>
+      <div class="key"><b>Core principle:</b> amino-acid <b>sequence</b> influences folding into a specific 3D <b>shape</b>, and shape enables <b>function</b>.</div>
+    </div>
+
+    <div class="card">
+      <h2>8. Amino-acid structure and R groups</h2>
+      <p>An amino acid has a central <b>α-carbon</b> bonded to an amino group, carboxyl group, H atom, and variable <b>R group</b>. At about cellular pH, amino and carboxyl groups are commonly ionized.</p>
+      <div class="visual">
+        <svg viewBox="0 0 650 330">
+          <circle cx="325" cy="165" r="38" fill="#fff" stroke="#172033" stroke-width="3"/><text x="325" y="171" text-anchor="middle" font-weight="700">Cα</text>
+          <line x1="287" y1="165" x2="160" y2="165" stroke="#172033" stroke-width="4"/><text x="105" y="171" text-anchor="middle" font-weight="700">H₃N⁺</text>
+          <line x1="363" y1="165" x2="490" y2="165" stroke="#172033" stroke-width="4"/><text x="545" y="171" text-anchor="middle" font-weight="700">COO⁻</text>
+          <line x1="325" y1="127" x2="325" y2="50" stroke="#172033" stroke-width="4"/><text x="325" y="34" text-anchor="middle" font-weight="700">H</text>
+          <line x1="325" y1="203" x2="325" y2="280" stroke="#172033" stroke-width="4"/><text x="325" y="310" text-anchor="middle" font-weight="700">R group</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>R-group chemistry predicts folding tendencies</h2>
+    <div class="scroll"><table>
+      <tr><th>R-group property</th><th>Typical behavior in an aqueous protein</th></tr>
+      <tr><td><b>Hydrophobic / nonpolar</b></td><td>Often clusters away from water in the protein interior.</td></tr>
+      <tr><td><b>Hydrophilic / polar</b></td><td>Often interacts with water or other polar groups; can form hydrogen bonds.</td></tr>
+      <tr><td><b>Ionic / charged</b></td><td>Can form electrostatic attractions with oppositely charged R groups.</td></tr>
+    </table></div>
+    <div class="q">
+      <b>Interactive model:</b> A soluble globular protein has one nonpolar R group. Where is it most likely to be found after folding?
+      <div class="inline-actions">
+        <button class="btn secondary" onclick="instantFeedback('fb-rg',false,'Not usually. A nonpolar R group tends to avoid water in a soluble protein.')">On the water-exposed surface</button>
+        <button class="btn secondary" onclick="instantFeedback('fb-rg',true,'Correct. Hydrophobic interactions tend to bury nonpolar R groups away from water.')">In the protein interior</button>
+      </div>
+      <div id="fb-rg" class="feedback"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card">
+      <h2>9. Peptide bonds and N→C directionality</h2>
+      <p>A <b>peptide bond</b> forms by dehydration/condensation between the carboxyl group of one amino acid and the amino group of another. An –OH and –H are removed as H₂O, and a covalent C–N bond forms.</p>
+      <div class="key"><b>Directionality:</b> polypeptides have an <b>N-terminus</b> and a <b>C-terminus</b>; sequence is conventionally written N→C.</div>
+    </div>
+    <div class="card">
+      <h2>Peptide vs polypeptide vs protein</h2>
+      <div class="scroll"><table>
+        <tr><th>Term</th><th>Meaning</th></tr>
+        <tr><td>Peptide</td><td>Relatively short amino-acid chain</td></tr>
+        <tr><td>Polypeptide</td><td>Longer chain with a specific N→C sequence</td></tr>
+        <tr><td>Protein</td><td>One or more polypeptide chains folded into a functional 3D structure</td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>10. Four levels of protein structure</h2>
+    <div class="scroll"><table>
+      <tr><th>Level</th><th>Description</th><th>Main stabilizing interactions</th></tr>
+      <tr><td><b>Primary</b></td><td>Exact amino-acid sequence</td><td>Peptide bonds</td></tr>
+      <tr><td><b>Secondary</b></td><td>Local α-helices and β-sheets</td><td>Hydrogen bonds between backbone groups</td></tr>
+      <tr><td><b>Tertiary</b></td><td>Overall 3D shape of one polypeptide</td><td>R-group interactions: hydrophobic, H-bond, ionic, disulfide</td></tr>
+      <tr><td><b>Quaternary</b></td><td>Association of ≥2 polypeptide subunits</td><td>Interactions between subunits</td></tr>
+    </table></div>
+    <div class="visual">
+      <svg viewBox="0 0 920 260">
+        <g transform="translate(40,20)">
+          <text x="80" y="25" text-anchor="middle" font-weight="700">Primary</text>
+          <polyline points="10,90 40,70 70,90 100,70 130,90 160,70" fill="none" stroke="#2f6fed" stroke-width="8"/>
+          <text x="80" y="130" text-anchor="middle">amino-acid sequence</text>
+        </g>
+        <g transform="translate(245,20)">
+          <text x="95" y="25" text-anchor="middle" font-weight="700">Secondary</text>
+          <path d="M20,90 C40,45 60,135 80,90 S120,45 140,90 S180,135 200,90" fill="none" stroke="#6c4ee3" stroke-width="8"/>
+          <text x="95" y="130" text-anchor="middle">α-helix / β-sheet</text>
+        </g>
+        <g transform="translate(500,20)">
+          <text x="80" y="25" text-anchor="middle" font-weight="700">Tertiary</text>
+          <path d="M20,80 C45,20 150,35 135,95 C125,140 35,150 20,80 Z" fill="#e8f7ef" stroke="#198754" stroke-width="5"/>
+          <text x="80" y="130" text-anchor="middle">one folded chain</text>
+        </g>
+        <g transform="translate(710,20)">
+          <text x="85" y="25" text-anchor="middle" font-weight="700">Quaternary</text>
+          <circle cx="50" cy="75" r="42" fill="#e7f0ff" stroke="#2f6fed" stroke-width="4"/><circle cx="115" cy="75" r="42" fill="#efeaff" stroke="#6c4ee3" stroke-width="4"/>
+          <circle cx="70" cy="125" r="42" fill="#e8f7ef" stroke="#198754" stroke-width="4"/><circle cx="130" cy="125" r="42" fill="#fff8dd" stroke="#b7791f" stroke-width="4"/>
+          <text x="90" y="190" text-anchor="middle">multiple subunits</text>
+        </g>
+      </svg>
+    </div>
+    <div class="mistake"><b>Common misconception:</b> α-helices and β-sheets are stabilized mainly by backbone hydrogen bonds, not by side-chain interactions. Side-chain chemistry is especially important for tertiary structure.</div>
+    <div class="ap-tip"><b>AP connection:</b> A mutation changes primary structure first. Whether function changes depends on how that substitution affects folding, active/binding sites, stability, or subunit interactions.</div>
+  </div>
+
+  <details class="accordion">
+    <summary>Need a Hint? — How to reason from mutation → protein function</summary>
+    <p>Ask three questions: (1) Did the amino-acid <b>R-group chemistry</b> change? (2) Is the altered residue near a region important for folding or binding? (3) Would that change affect the final 3D shape or interactions?</p>
+  </details>
+  <details class="accordion">
+    <summary>Challenge Me — Extension</summary>
+    <p>A surface polar residue is replaced by a strongly hydrophobic residue in a soluble enzyme. Predict one possible effect on folding or solubility and justify your answer using R-group interactions.</p>
+  </details>
+
+  <div class="card">
+    <h2>Before You Continue</h2>
+    <p>Answer at least 3 of 4 correctly.</p>
+    <div id="gateLearn"></div>
+    <div class="inline-actions"><button class="btn" onclick="renderGate('gateLearn')">Start knowledge check</button></div>
+  </div>
+
+  <div class="navfoot"><button class="btn secondary" onclick="go('home')">← Previous</button><button class="btn" onclick="go('simulation')">Next: Simulation →</button></div>
+</section>
+
+<section id="simulation" class="page">
+  <div class="section-title"><div><h2>Visual Simulation</h2><div class="small">DNA strand extension: why synthesis proceeds 5′→3′</div></div><span class="badge">Interactive</span></div>
+  <div class="card">
+    <div class="stepdots" id="stepdots"></div>
+    <div id="simContent" style="margin-top:16px"></div>
+    <div class="inline-actions">
+      <button class="btn" onclick="simStart()">Start</button>
+      <button class="btn secondary" onclick="simPause()">Pause</button>
+      <button class="btn secondary" onclick="simPrev()">Previous Step</button>
+      <button class="btn" onclick="simNext()">Next Step</button>
+      <button class="btn ghost" onclick="simReset()">Reset</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h3>Predict what happens next</h3>
+    <p>An incoming nucleotide triphosphate approaches the growing DNA strand. Which functional group must be available on the strand for addition?</p>
+    <label><input type="radio" name="simpred" value="5p"> 5′ phosphate</label>
+    <label><input type="radio" name="simpred" value="3oh"> 3′ OH</label>
+    <label><input type="radio" name="simpred" value="base"> Nitrogenous base</label>
+    <div class="inline-actions"><button class="btn" onclick="formative('simpred','3oh','fb-simpred','Correct. The 3′ OH attacks the incoming nucleotide’s phosphate and the chain extends at its 3′ end.','Try again. Think about the chemical end to which nucleotides are added.')">Check prediction</button></div>
+    <div id="fb-simpred" class="feedback"></div>
+  </div>
+  <div class="navfoot"><button class="btn secondary" onclick="go('learn')">← Previous</button><button class="btn" onclick="go('practice')">Next: Practice →</button></div>
+</section>
+
+<section id="practice" class="page">
+  <div class="section-title"><div><h2>Differentiated Practice</h2><div class="small">Immediate feedback is available. Retry as needed.</div></div></div>
+  <div class="grid g3">
+    <div class="card level"><h3>Level 1 — Foundation</h3><p>Identify, define, recognize, and describe core concepts.</p><div id="practice1"></div></div>
+    <div class="card level l2"><h3>Level 2 — Application</h3><p>Apply, compare, interpret, and predict.</p><div id="practice2"></div></div>
+    <div class="card level l3"><h3>Level 3 — AP Reasoning</h3><p>Use evidence, mechanisms, unfamiliar situations, and cause-effect reasoning.</p><div id="practice3"></div></div>
+  </div>
+  <div class="navfoot"><button class="btn secondary" onclick="go('simulation')">← Previous</button><button class="btn" onclick="go('ap')">Next: AP Challenge →</button></div>
+</section>
+
+<section id="ap" class="page">
+  <div class="section-title"><div><h2>AP Challenge</h2><div class="small">Stimulus-based reasoning and short FRQs</div></div></div>
+
+  <div class="card stimulus">
+    <h3>Stimulus Set 1 — Base composition</h3>
+    <p>Researchers measure base composition in a double-stranded DNA sample.</p>
+    <div class="scroll"><table><tr><th>Base</th><th>Measured %</th></tr><tr><td>A</td><td>31</td></tr><tr><td>T</td><td>31</td></tr><tr><td>G</td><td>19</td></tr><tr><td>C</td><td>19</td></tr></table></div>
+    <div id="stim1"></div>
+  </div>
+
+  <div class="card stimulus" style="margin-top:18px">
+    <h3>Stimulus Set 2 — Protein stability experiment</h3>
+    <p>An enzyme is incubated for 10 minutes at different temperatures, then activity is measured relative to its starting activity.</p>
+    <div class="scroll"><table><tr><th>Temperature (°C)</th><th>Relative activity (%)</th></tr><tr><td>20</td><td>92</td></tr><tr><td>37</td><td>100</td></tr><tr><td>55</td><td>58</td></tr><tr><td>75</td><td>7</td></tr></table></div>
+    <div class="visual"><svg viewBox="0 0 700 320">
+      <line x1="70" y1="260" x2="640" y2="260" stroke="#172033" stroke-width="2"/><line x1="70" y1="40" x2="70" y2="260" stroke="#172033" stroke-width="2"/>
+      <text x="350" y="305" text-anchor="middle">Temperature (°C)</text><text x="18" y="155" transform="rotate(-90 18 155)" text-anchor="middle">Relative activity (%)</text>
+      <polyline points="140,75 280,60 430,145 580,245" fill="none" stroke="#2f6fed" stroke-width="5"/>
+      <g fill="#2f6fed"><circle cx="140" cy="75" r="7"/><circle cx="280" cy="60" r="7"/><circle cx="430" cy="145" r="7"/><circle cx="580" cy="245" r="7"/></g>
+      <g font-size="14"><text x="140" y="280" text-anchor="middle">20</text><text x="280" y="280" text-anchor="middle">37</text><text x="430" y="280" text-anchor="middle">55</text><text x="580" y="280" text-anchor="middle">75</text></g>
+    </svg></div>
+    <div id="stim2"></div>
+  </div>
+
+  <div class="card stimulus" style="margin-top:18px">
+    <h3>Stimulus Set 3 — R-group substitution</h3>
+    <p>A mutation replaces a negatively charged surface amino acid with a nonpolar amino acid in a soluble protein. The protein is less soluble and forms aggregates at the same pH and temperature as the wild type.</p>
+    <div id="stim3"></div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>Short AP-style FRQs</h2>
+    <p class="small">Submit your own response before opening teacher feedback.</p>
+    <h3>FRQ 1 — Directionality</h3>
+    <p>(a) Describe how a phosphodiester bond forms. (b) Explain why nucleic-acid synthesis proceeds 5′→3′. (c) Predict the effect of chemically blocking the 3′ OH at the growing end.</p>
+    <textarea id="frq1"></textarea>
+    <h3>FRQ 2 — Protein folding</h3>
+    <p>(a) Explain how R-group chemistry contributes to tertiary structure. (b) Predict how high temperature may affect enzyme function. (c) Justify your prediction at the molecular level.</p>
+    <textarea id="frq2"></textarea>
+    <h3>FRQ 3 — DNA vs RNA stability</h3>
+    <p>(a) Identify one structural difference between DNA and RNA. (b) Explain how that difference contributes to stability. (c) Predict which molecule is better suited for long-term information storage and justify.</p>
+    <textarea id="frq3"></textarea>
+    <div class="inline-actions"><button class="btn" onclick="saveFRQPractice()">Submit FRQ practice</button></div>
+    <div id="fb-frq" class="feedback"></div>
+  </div>
+
+  <div class="navfoot"><button class="btn secondary" onclick="go('practice')">← Previous</button><button class="btn" onclick="go('assessment')">Next: Mini Assessment →</button></div>
+</section>
+
+<section id="assessment" class="page">
+  <div class="section-title"><div><h2>Mini Assessment</h2><div class="small">No hints. Correct answers are shown only after submission.</div></div><span class="badge">15–25 min</span></div>
+
+  <div class="card">
+    <div class="formgrid">
+      <div><label>Student Name</label><input id="studentName" type="text"></div>
+      <div><label>Student ID</label><input id="studentId" type="text"></div>
+      <div><label>Class</label><input id="studentClass" type="text"></div>
+    </div>
+  </div>
+
+  <div id="assessmentQuestions" class="card" style="margin-top:18px"></div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>Short FRQ — 3 marks</h3>
+    <p>A mutation changes a hydrophilic amino acid on the surface of a soluble enzyme to a strongly hydrophobic amino acid. Predict one possible effect on the protein and justify the prediction using the sequence → shape → function relationship.</p>
+    <textarea id="finalFrq" placeholder="Write a concise AP-style response."></textarea>
+    <div class="small">This FRQ is stored for teacher review and is worth 3 marks. The automated score below is provisional until the teacher enters the FRQ mark.</div>
+  </div>
+
+  <div class="inline-actions">
+    <button class="btn good" onclick="submitAssessment()">Submit Assessment</button>
+    <button class="btn ghost" onclick="resetAssessment()">Reset</button>
+  </div>
+  <div class="navfoot"><button class="btn secondary" onclick="go('ap')">← Previous</button><button class="btn" onclick="go('results')">View Results →</button></div>
+</section>
+
+<section id="results" class="page">
+  <div class="section-title"><div><h2>Your Result</h2><div class="small">Most recent attempt saved in this browser</div></div></div>
+  <div id="studentResult" class="card"><p>No submitted attempt yet.</p></div>
+  <div class="inline-actions no-print"><button class="btn secondary" onclick="window.print()">Print student report</button></div>
+  <div class="navfoot"><button class="btn secondary" onclick="go('assessment')">← Previous</button><button class="btn" onclick="go('home')">Home</button></div>
+</section>
+
+<section id="teacher" class="page">
+  <div id="teacherLogin" class="card" style="max-width:520px;margin:auto">
+    <h2>Teacher Mode</h2>
+    <p>Enter the teacher password.</p>
+    <input id="teacherPassword" type="password" placeholder="Password">
+    <div class="inline-actions"><button class="btn" onclick="teacherLogin()">Open dashboard</button></div>
+    <div id="teacherLoginFb" class="feedback"></div>
+    <p class="small">Note: this is a self-contained local HTML file. Client-side password protection separates teacher content in normal use but is not equivalent to secure server authentication.</p>
+  </div>
+
+  <div id="teacherDashboard" class="hidden">
+    <div class="section-title"><div><h2>Teacher Dashboard</h2><div class="small">Data stored locally in this browser</div></div></div>
+    <div id="classMetrics" class="grid g3"></div>
+    <div class="card" style="margin-top:18px">
+      <h3>Student attempts</h3><div id="attemptTable" class="scroll"></div>
+      <div class="inline-actions no-print"><button class="btn" onclick="exportCSV()">Export CSV</button><button class="btn secondary" onclick="window.print()">Print teacher report</button><button class="btn bad" onclick="clearAttempts()">Clear local results</button></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>Question-level analysis</h3><div id="questionAnalysis" class="scroll"></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>Marking guides</h3>
+      <details class="accordion"><summary>Final assessment FRQ — 3 marks</summary>
+        <ol><li><b>1 mark:</b> predicts a plausible consequence such as reduced solubility, altered folding, aggregation, altered activity, or reduced stability.</li>
+        <li><b>1 mark:</b> connects hydrophobic R-group chemistry to altered interactions with the aqueous environment and/or folding.</li>
+        <li><b>1 mark:</b> explicitly connects the sequence change to shape and then to function.</li></ol>
+      </details>
+      <details class="accordion"><summary>FRQ practice guides</summary>
+        <p><b>FRQ 1:</b> 3′ OH reacts in formation of a phosphodiester bond; addition at the 3′ end gives 5′→3′ growth; blocking 3′ OH stops extension.</p>
+        <p><b>FRQ 2:</b> tertiary structure depends on R-group interactions; high temperature disrupts noncovalent interactions and may denature the enzyme; altered shape can impair active-site function.</p>
+        <p><b>FRQ 3:</b> RNA has a 2′ OH whereas DNA has 2′ H; the 2′ OH increases chemical reactivity; DNA is better suited to long-term information storage.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="toast" class="toast"></div>
+
+<script>
+const PAGES=['home','learn','simulation','practice','ap','assessment','results'];
+let visited=new Set(JSON.parse(localStorage.getItem('bioVisited')||'["home"]'));
+let lessonStart=Number(localStorage.getItem('bioStart')||Date.now());
+localStorage.setItem('bioStart',lessonStart);
+
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  if(PAGES.includes(id)){visited.add(id);localStorage.setItem('bioVisited',JSON.stringify([...visited]));}
+  updateProgress();window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='results') renderStudentResult();
+  if(id==='teacher' && !document.getElementById('teacherDashboard').classList.contains('hidden')) renderTeacher();
+}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+
+function updateProgress(){
+  const done=[...visited].filter(x=>PAGES.includes(x)).length;
+  const pct=Math.round(done/PAGES.length*100);
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('progressText').textContent=pct+'% complete';
+}
+updateProgress();
+
+function showToast(msg){let t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+function instantFeedback(id,ok,msg){let e=document.getElementById(id);e.className='feedback '+(ok?'good':'bad');e.textContent=msg}
+function formative(name,answer,fb,good,bad){
+  const el=document.querySelector('input[name="'+name+'"]:checked');
+  if(!el){instantFeedback(fb,false,'Choose an answer first.');return}
+  instantFeedback(fb,el.value===answer,el.value===answer?good:bad);
+}
+function selectCheck(id,answer,fb,good,bad){let v=document.getElementById(id).value;instantFeedback(fb,v===answer,v===answer?good:bad)}
+function numberCheck(id,answer,fb,good,bad){let v=Number(document.getElementById(id).value);instantFeedback(fb,v===answer,v===answer?good:bad)}
+
+const labelState={nt:{selected:null,placed:{}}};
+const labelNames={phosphate:'Phosphate group',sugar:'5-carbon sugar',base:'Nitrogenous base'};
+function chooseLabel(btn,activity){
+  document.querySelectorAll('#'+activity+'Bank .label-chip').forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');labelState[activity].selected=btn.dataset.label;
+}
+function placeLabel(target,activity){
+  let s=labelState[activity].selected;if(!s){showToast('Select a label first.');return}
+  const key=target.dataset.key;labelState[activity].placed[key]=s;
+  target.querySelector('text').textContent=labelNames[s];labelState[activity].selected=null;
+  document.querySelectorAll('#'+activity+'Bank .label-chip').forEach(x=>x.classList.remove('selected'));
+}
+function checkLabels(activity){
+  const p=labelState[activity].placed;const keys=['phosphate','sugar','base'];
+  const correct=keys.filter(k=>p[k]===k).length;
+  instantFeedback('fb-'+activity,correct===3,correct===3?'Excellent — all three labels are scientifically correct.':correct+'/3 correct. Recheck the leader lines and match each label to the structure it points to.');
+}
+function resetLabels(activity){labelState[activity].placed={};labelState[activity].selected=null;document.querySelectorAll('#'+activity+'Bank .label-chip').forEach(x=>x.classList.remove('selected'));document.querySelectorAll('#learn .target text').forEach(x=>x.textContent='Tap target');document.getElementById('fb-'+activity).className='feedback'}
+function showLabels(activity){labelState[activity].placed={phosphate:'phosphate',sugar:'sugar',base:'base'};document.querySelectorAll('#learn .target').forEach(t=>{if(t.dataset.key)t.querySelector('text').textContent=labelNames[t.dataset.key]});instantFeedback('fb-'+activity,true,'Answer shown. Reset and try again without the key.')}
+
+const gateQs=[
+ {q:'Which bond links adjacent nucleotides in one nucleic-acid strand?',a:['Hydrogen bond','Phosphodiester bond','Peptide bond','Ionic bond'],c:1},
+ {q:'Which structure level is the exact amino-acid sequence?',a:['Primary','Secondary','Tertiary','Quaternary'],c:0},
+ {q:'Which base pair forms three hydrogen bonds?',a:['A–T','A–U','G–C','A–G'],c:2},
+ {q:'Which R group is most likely buried inside a soluble globular protein?',a:['Strongly nonpolar','Strongly polar','Positively charged','Negatively charged'],c:0}
+];
+function renderGate(id){
+  let el=document.getElementById(id);el.innerHTML=gateQs.map((x,i)=>`<div class="q"><b>${i+1}. ${x.q}</b>${x.a.map((a,j)=>`<label><input type="radio" name="gate${i}" value="${j}"> ${a}</label>`).join('')}</div>`).join('')+`<button class="btn" onclick="scoreGate()">Check section score</button><div id="gateFb" class="feedback"></div>`;
+}
+function scoreGate(){
+  let score=0;gateQs.forEach((q,i)=>{let x=document.querySelector(`input[name="gate${i}"]:checked`);if(x&&Number(x.value)===q.c)score++});
+  instantFeedback('gateFb',score>=3,`Section Score: ${score}/4. `+(score>=3?'Ready to continue.':'Review the section, then try again. Aim for at least 3/4.'));
+}
+
+// Simulation
+const simStages=[
+ {title:'Stage 1 — Growing strand',txt:'The growing DNA strand has an exposed 3′ OH at its end. This hydroxyl group is the chemical site for the next nucleotide addition.',svg:`<svg viewBox="0 0 720 250"><text x="40" y="45" font-weight="700">5′</text><line x1="80" y1="120" x2="480" y2="120" stroke="#6c4ee3" stroke-width="9"/><circle cx="160" cy="120" r="22" fill="#e7f0ff"/><circle cx="270" cy="120" r="22" fill="#e7f0ff"/><circle cx="380" cy="120" r="22" fill="#e7f0ff"/><text x="510" y="126" font-weight="700">3′–OH</text></svg>`},
+ {title:'Stage 2 — Incoming nucleotide triphosphate',txt:'An incoming dNTP carries three phosphates. The α phosphate is closest to the sugar and is the one incorporated into the backbone.',svg:`<svg viewBox="0 0 720 250"><line x1="60" y1="120" x2="380" y2="120" stroke="#6c4ee3" stroke-width="9"/><text x="405" y="126" font-weight="700">3′–OH</text><g transform="translate(540,75)"><polygon points="0,30 35,5 70,30 58,72 12,72" fill="#efeaff"/><circle cx="95" cy="38" r="20" fill="#e7f0ff"/><circle cx="140" cy="38" r="20" fill="#e7f0ff"/><circle cx="185" cy="38" r="20" fill="#e7f0ff"/><text x="140" y="100" text-anchor="middle">incoming dNTP</text></g></svg>`},
+ {title:'Stage 3 — Phosphodiester bond formation',txt:'The 3′ OH participates in forming a new covalent phosphodiester linkage to the incoming nucleotide’s 5′ phosphate.',svg:`<svg viewBox="0 0 720 250"><line x1="60" y1="120" x2="390" y2="120" stroke="#6c4ee3" stroke-width="9"/><path d="M410,120 C460,80 500,80 540,120" fill="none" stroke="#2f6fed" stroke-width="5"/><text x="475" y="65" text-anchor="middle">new phosphodiester bond</text><polygon points="560,90 595,65 630,90 618,132 572,132" fill="#efeaff"/></svg>`},
+ {title:'Stage 4 — Pyrophosphate released',txt:'Two phosphate groups are released together as pyrophosphate (PPi). Their release helps drive the reaction forward.',svg:`<svg viewBox="0 0 720 250"><line x1="60" y1="120" x2="560" y2="120" stroke="#6c4ee3" stroke-width="9"/><circle cx="400" cy="120" r="22" fill="#e7f0ff"/><path d="M520,90 C570,45 620,50 650,80" fill="none" stroke="#2f6fed" stroke-width="4"/><text x="620" y="45" text-anchor="middle">PPi released</text></svg>`},
+ {title:'Stage 5 — Strand extended',txt:'The strand is one nucleotide longer. A new 3′ OH is now present at the end, so the next nucleotide can be added. Net growth is 5′→3′.',svg:`<svg viewBox="0 0 720 250"><text x="35" y="45" font-weight="700">5′</text><line x1="70" y1="120" x2="570" y2="120" stroke="#6c4ee3" stroke-width="9"/><circle cx="160" cy="120" r="20" fill="#e7f0ff"/><circle cx="270" cy="120" r="20" fill="#e7f0ff"/><circle cx="380" cy="120" r="20" fill="#e7f0ff"/><circle cx="490" cy="120" r="20" fill="#e7f0ff"/><text x="590" y="126" font-weight="700">3′–OH</text><text x="340" y="190" text-anchor="middle" font-weight="700">growth direction → 5′ to 3′</text></svg>`}
+];
+let simIndex=0,simTimer=null;
+function renderSim(){document.getElementById('simContent').innerHTML=`<h3>${simStages[simIndex].title}</h3><div class="visual">${simStages[simIndex].svg}</div><p>${simStages[simIndex].txt}</p>`;document.getElementById('stepdots').innerHTML=simStages.map((_,i)=>`<span class="stepdot ${i===simIndex?'active':''}"></span>`).join('')}
+function simNext(){simIndex=Math.min(simStages.length-1,simIndex+1);renderSim()}function simPrev(){simIndex=Math.max(0,simIndex-1);renderSim()}
+function simReset(){simPause();simIndex=0;renderSim()}function simPause(){if(simTimer){clearInterval(simTimer);simTimer=null}}
+function simStart(){simPause();simTimer=setInterval(()=>{if(simIndex>=simStages.length-1){simPause();return}simNext()},1800)}
+renderSim();
+
+// Practice
+const practice={
+  practice1:[
+   ['A nucleotide contains which three components?',['Sugar, amino acid, phosphate','Base, sugar, phosphate','Base, lipid, sugar','Phosphate, peptide, base'],1,'A nucleotide contains a nitrogenous base, a 5-carbon sugar, and phosphate.'],
+   ['Which are purines?',['A and G','C and T','C and U','T and U'],0,'Adenine and guanine are the two purines.'],
+   ['A–T pairs contain how many hydrogen bonds?',['1','2','3','4'],1,'A–T forms two hydrogen bonds.'],
+   ['Which sugar is found in RNA?',['Glucose','Deoxyribose','Ribose','Fructose'],2,'RNA contains ribose.'],
+   ['Which bond joins amino acids?',['Phosphodiester','Hydrogen','Peptide','Glycosidic'],2,'Amino acids are joined by peptide bonds.'],
+   ['Which level is a local α-helix?',['Primary','Secondary','Tertiary','Quaternary'],1,'α-helices and β-sheets are secondary structure.'],
+   ['Which structure has two or more polypeptide subunits?',['Primary','Secondary','Tertiary','Quaternary'],3,'Quaternary structure is formed by multiple polypeptide subunits.'],
+   ['Which R group category tends to avoid water?',['Nonpolar','Polar','Positive only','Negative only'],0,'Hydrophobic/nonpolar R groups tend to avoid water.']
+  ],
+  practice2:[
+   ['If C = 22% in dsDNA, what is A?',['22%','28%','44%','56%'],1,'C=G=22%, so C+G=44%; A+T=56%; A=28%.'],
+   ['Which change most directly makes RNA more reactive than DNA?',['Uracil replaces thymine','Presence of 2′ OH','Single-stranded shape only','Shorter average length'],1,'The ribose 2′ OH increases backbone chemical reactivity.'],
+   ['A protein loses activity after heating. Which explanation is most likely?',['Peptide bonds always hydrolyzed','DNA changed first','Noncovalent interactions supporting shape were disrupted','All amino acids disappeared'],2,'Heat can disrupt interactions supporting tertiary structure and alter the active site.'],
+   ['A charged surface residue is replaced by a nonpolar residue. What could change first?',['R-group interactions with water','DNA base pairing','Peptide bond direction','Number of chromosomes'],0,'The side-chain chemistry changes how that region interacts with water and neighboring groups.'],
+   ['Why can one DNA strand determine the other?',['Both strands have identical sequences','Complementary base-pairing rules constrain the opposite sequence','Phosphate groups encode bases','All nucleotides pair randomly'],1,'Complementarity means each base specifies its partner.'],
+   ['Blocking a growing DNA strand’s 3′ OH would most directly cause...',['faster extension','loss of base identity','termination of strand extension','conversion to RNA'],2,'Without the 3′ OH, the next phosphodiester bond cannot form normally.'],
+   ['Which mutation is most likely to alter a protein’s interior packing?',['Nonpolar→charged substitution in a buried residue','Synonymous DNA change with same amino acid','Change in an intron that has no effect','Change in RNA uracil abundance'],0,'A charged residue buried in a hydrophobic interior can strongly disrupt folding.'],
+   ['Which evidence best supports DNA antiparallel organization?',['Both strands point 5′→3′ in the same direction','Complementary strands align with opposite chemical orientations','A always equals G','RNA contains uracil'],1,'The two strands have opposite 5′ and 3′ orientations.']
+  ],
+  practice3:[
+   ['A mutation replaces a buried leucine with aspartate. The best prediction is...',['No effect because primary structure is unchanged','Possible destabilization because a charged R group is introduced into a hydrophobic region','Stronger peptide bonds automatically form','DNA becomes single stranded'],1,'Changing hydrophobic leucine to charged aspartate can destabilize hydrophobic packing.'],
+   ['A DNA sample has 30% A. Which statement must be true?',['G=30%','T=30%','C=40%','A+G=60%'],1,'In dsDNA, A=T. The remaining 40% is G+C, so G=C=20%.'],
+   ['A researcher chemically modifies ribose so its 2′ OH is replaced by H. Which property would likely increase?',['Backbone reactivity','Similarity to DNA and chemical stability','Ability to use uracil only','Number of phosphate groups per nucleotide'],1,'Removing the 2′ OH makes the sugar more DNA-like and generally less reactive.'],
+   ['An enzyme variant has normal primary sequence length but lower activity. Which observation most strongly supports altered tertiary structure?',['Same number of peptide bonds','Different 3D conformation near the active site','Same mRNA length','Same amino-acid count'],1,'Function depends on precise 3D shape, particularly around binding/active sites.'],
+   ['A nucleotide analog lacks a 3′ OH. If incorporated into a growing strand, what occurs?',['The next nucleotide cannot be added normally','The strand switches to 3′→5′ synthesis','Hydrogen bonds become covalent','The analog creates a peptide bond'],0,'Lack of 3′ OH causes chain termination.'],
+   ['Why can high temperature reduce enzyme activity without changing primary structure?',['It can disrupt noncovalent interactions that maintain higher-order structure','It removes all peptide bonds instantly','It converts amino acids to nucleotides','It changes Chargaff’s ratios'],0,'Temperature can disrupt folding interactions while leaving peptide bonds intact.'],
+   ['A protein contains four subunits. One mutation prevents subunit association but each subunit still folds normally. Which level is directly disrupted?',['Primary','Secondary','Tertiary','Quaternary'],3,'Association among multiple folded polypeptides is quaternary structure.'],
+   ['A G–C rich DNA region generally requires more energy to separate than an A–T rich region because...',['G–C pairs have three hydrogen bonds','G and C are purines','G–C forms peptide bonds','A–T lacks phosphate'],0,'Each G–C pair has three hydrogen bonds versus two for A–T.'],
+   ['Which result best supports the claim that shape determines protein function?',['Denatured enzyme has reduced catalytic activity','DNA contains A,T,G,C','RNA contains ribose','Peptide bonds are covalent'],0,'Loss of function after denaturation directly links 3D shape to function.'],
+   ['A mutation changes one surface polar residue to another polar residue of similar size. Which outcome is most reasonable?',['Function must be completely lost','Effect may be small if key interactions and folding remain similar','Primary structure is unchanged','The protein becomes DNA'],1,'Not every substitution has a large effect; chemical similarity and structural context matter.']
+  ]
+};
+function renderPractice(){
+ Object.keys(practice).forEach(id=>{
+  const el=document.getElementById(id);
+  el.innerHTML=practice[id].map((q,i)=>`<div class="q"><b>${i+1}. ${q[0]}</b>${q[1].map((a,j)=>`<label><input type="radio" name="${id}_${i}" value="${j}"> ${a}</label>`).join('')}<button class="btn secondary" onclick="practiceCheck('${id}',${i})">Check</button><div id="fb_${id}_${i}" class="feedback"></div></div>`).join('');
+ });
+}
+function practiceCheck(id,i){const q=practice[id][i],x=document.querySelector(`input[name="${id}_${i}"]:checked`);if(!x){instantFeedback(`fb_${id}_${i}`,false,'Choose an answer first.');return}let ok=Number(x.value)===q[2];instantFeedback(`fb_${id}_${i}`,ok,ok?'Correct. '+q[3]:'Try again. '+q[3])}
+renderPractice();
+
+// Stimulus sets
+const stimSets={
+ stim1:[
+  ['Which conclusion is supported by the data?',['A pairs with G','A and T occur in equal percentages, as do G and C','Purines always total 50% in RNA','C must equal A'],1,'The measured equalities A=T and G=C support Chargaff’s relationships.'],
+  ['What percentage of bases are purines in this dsDNA?',['31%','38%','50%','62%'],2,'Purines are A+G = 31%+19% = 50%.'],
+  ['If a replication error changed one G to A on one newly synthesized strand before repair, what would be created locally?',['A guaranteed peptide bond','A mismatch unless the opposite base also changes','A phospholipid','A second sugar'],1,'A single base substitution on one strand can create a mismatch with the original complementary base.']
+ ],
+ stim2:[
+  ['Which temperature produced the highest measured activity?',['20°C','37°C','55°C','75°C'],1,'37°C produced 100% relative activity.'],
+  ['Which mechanism best explains the sharp decline at 75°C?',['Loss of all primary structure is required','Disruption of interactions maintaining the enzyme’s 3D conformation','Conversion of peptide bonds to phosphodiester bonds','Increased Chargaff pairing'],1,'High temperature can disrupt noncovalent interactions important for folding.'],
+  ['Which additional measurement would most directly test whether the enzyme became denatured?',['3D structural/conformation assay after treatment','DNA base composition','Cell chromosome number','Amount of thymine in RNA'],0,'A conformation assay directly tests whether protein shape changed.']
+ ],
+ stim3:[
+  ['Which evidence most directly links the mutation to the observed phenotype?',['The mutant has reduced solubility under otherwise identical conditions','The cell contains DNA','The protein contains peptide bonds','The amino acid has a carbon atom'],0,'Controlled comparison shows the sequence change is associated with altered solubility.'],
+  ['Which molecular explanation is strongest?',['The new nonpolar side chain is less favorable on a water-exposed surface','The mutation removes all phosphates','The protein becomes antiparallel DNA','Hydrogen bonds in DNA are broken'],0,'Hydrophobic surface exposure can promote unfavorable water interactions and aggregation.'],
+  ['Predict a possible functional consequence.',['Activity may decrease if aggregation or altered folding changes the functional shape','Function must always increase','The DNA sequence becomes RNA','Quaternary structure always appears'],0,'Aggregation or altered folding can reduce availability or distort functional sites.']
+ ]
+};
+function renderStimuli(){
+ Object.keys(stimSets).forEach(id=>{
+  document.getElementById(id).innerHTML=stimSets[id].map((q,i)=>`<div class="q"><b>${i+1}. ${q[0]}</b>${q[1].map((a,j)=>`<label><input type="radio" name="${id}_${i}" value="${j}"> ${a}</label>`).join('')}<button class="btn secondary" onclick="stimCheck('${id}',${i})">Check</button><div id="fb_${id}_${i}" class="feedback"></div></div>`).join('');
+ });
+}
+function stimCheck(id,i){let q=stimSets[id][i],x=document.querySelector(`input[name="${id}_${i}"]:checked`);if(!x){instantFeedback(`fb_${id}_${i}`,false,'Choose an answer first.');return}let ok=Number(x.value)===q[2];instantFeedback(`fb_${id}_${i}`,ok,ok?'Correct. '+q[3]:'Not quite. '+q[3])}
+renderStimuli();
+function saveFRQPractice(){localStorage.setItem('bioFrqPractice',JSON.stringify({frq1:frq1.value,frq2:frq2.value,frq3:frq3.value,date:new Date().toISOString()}));instantFeedback('fb-frq',true,'Responses saved locally. Teacher marking guides remain in Teacher Mode.')}
+
+// Assessment bank
+const assessmentBank=[
+ {id:'Q1',kpi:'1.3.14',level:'Foundation',skill:'Knowledge & Recall',q:'Which three components make up a nucleotide?',a:['Amino acid, sugar, phosphate','Base, sugar, phosphate','Base, glycerol, fatty acid','Sugar, peptide, base'],c:1,ex:'A nucleotide contains a nitrogenous base, a pentose sugar, and phosphate.'},
+ {id:'Q2',kpi:'1.3.18',level:'Foundation',skill:'Knowledge & Recall',q:'How many hydrogen bonds form in one G–C base pair?',a:['1','2','3','4'],c:2,ex:'G–C forms three hydrogen bonds.'},
+ {id:'Q3',kpi:'1.3.19',level:'Foundation',skill:'Knowledge & Recall',q:'Which sugar is found in DNA?',a:['Ribose','Deoxyribose','Glucose','Fructose'],c:1,ex:'DNA contains deoxyribose.'},
+ {id:'Q4',kpi:'1.3.23',level:'Foundation',skill:'Knowledge & Recall',q:'Which bond links amino acids in a polypeptide?',a:['Phosphodiester','Peptide','Hydrogen only','Glycosidic'],c:1,ex:'Amino acids are covalently linked by peptide bonds.'},
+ {id:'Q5',kpi:'1.3.25',level:'Foundation',skill:'Knowledge & Recall',q:'Which level of protein structure is the exact amino-acid sequence?',a:['Primary','Secondary','Tertiary','Quaternary'],c:0,ex:'Primary structure is the amino-acid sequence.'},
+ {id:'Q6',kpi:'1.3.18',level:'Application',skill:'Application',q:'A dsDNA sample contains 24% G. What percentage is A?',a:['24%','26%','48%','52%'],c:1,ex:'C=24%, so G+C=48%; A+T=52%; A=26%.'},
+ {id:'Q7',kpi:'1.3.16',level:'Application',skill:'Application',q:'A nucleotide analog lacks a 3′ OH. What is the most direct effect if it is incorporated into a growing DNA strand?',a:['Chain extension stops','The strand grows 3′→5′','Base pairing becomes covalent','RNA is produced'],c:0,ex:'Without a 3′ OH, the next phosphodiester bond cannot form normally.'},
+ {id:'Q8',kpi:'1.3.19',level:'Application',skill:'Application',q:'Which feature most directly contributes to RNA being more chemically reactive than DNA?',a:['Uracil','Single strand only','2′ OH on ribose','Shorter name'],c:2,ex:'The 2′ OH increases backbone reactivity.'},
+ {id:'Q9',kpi:'1.3.22',level:'Application',skill:'Application',q:'A nonpolar amino-acid side chain in a soluble globular protein is most likely located...',a:['on a water-exposed surface','in the hydrophobic interior','inside the DNA helix','only at the N-terminus'],c:1,ex:'Nonpolar side chains commonly cluster away from water.'},
+ {id:'Q10',kpi:'1.3.25',level:'Application',skill:'Application',q:'A protein contains four independently folded subunits. The interaction among the subunits represents...',a:['primary structure','secondary structure','tertiary structure','quaternary structure'],c:3,ex:'Quaternary structure is the association of multiple polypeptide subunits.'},
+ {id:'Q11',kpi:'1.3.22/1.3.25',level:'AP Reasoning',skill:'AP Reasoning',q:'A buried nonpolar residue is replaced by a charged residue. Which prediction is best supported?',a:['The protein may become less stable because hydrophobic packing is disrupted','The peptide backbone necessarily becomes RNA','No change is possible because peptide bonds remain','The mutation always increases enzyme activity'],c:0,ex:'A charged group in a hydrophobic core can destabilize tertiary structure.'},
+ {id:'Q12',kpi:'1.3.25',level:'AP Reasoning',skill:'AP Reasoning',q:'An enzyme loses activity after exposure to high temperature, but its peptide bonds remain intact. Which explanation is most likely?',a:['Primary structure was deleted','Noncovalent interactions supporting tertiary structure were disrupted','Chargaff’s rule failed','The enzyme became DNA'],c:1,ex:'Heat can disrupt higher-order folding without breaking peptide bonds.'},
+ {id:'Q13',kpi:'1.3.17',level:'AP Reasoning',skill:'AP Reasoning',q:'A DNA region with high G–C content is generally harder to separate than one with high A–T content because...',a:['G–C pairs form three hydrogen bonds','G and C are both purines','A–T pairs have no sugars','G–C pairs form peptide bonds'],c:0,ex:'G–C has three hydrogen bonds per base pair versus two for A–T.'},
+ {id:'Q14',kpi:'1.3.21/1.3.25',level:'AP Reasoning',skill:'AP Reasoning',q:'Which observation most directly supports the principle that protein shape determines protein function?',a:['A denatured enzyme has greatly reduced catalytic activity','DNA contains four bases','Amino acids contain carbon','RNA contains phosphate'],c:0,ex:'Denaturation changes shape and often reduces function, directly linking the two.'},
+ {id:'Q15',kpi:'1.3.22/1.3.25',level:'AP Reasoning',skill:'AP Reasoning',q:'A surface polar residue is replaced by another polar residue of similar size, and activity is unchanged. Which conclusion is most appropriate?',a:['Every mutation changes function','Chemically similar substitutions may have little effect if key interactions are preserved','Primary structure did not change','The protein lacks tertiary structure'],c:1,ex:'Effect size depends on chemical difference and structural context.'},
+ {id:'Q16',kpi:'1.3.18',level:'Data Analysis',skill:'Data Analysis',q:'A double-stranded DNA sample has 18% C. Which complete composition is correct?',a:['C18 G18 A32 T32','C18 G32 A18 T32','C18 G18 A18 T46','C18 G36 A23 T23'],c:0,ex:'C=G=18%; the remaining 64% is split equally between A and T.'},
+ {id:'Q17',kpi:'1.3.25',level:'Data Analysis',skill:'Data Analysis',q:'An enzyme retains 100% activity at 37°C, 58% at 55°C, and 7% at 75°C. Which claim is best supported?',a:['Increasing temperature across this range is associated with loss of enzyme function at higher temperatures','Temperature has no relationship to activity','Primary structure must be completely hydrolyzed by 55°C','The enzyme gains quaternary structure at 75°C'],c:0,ex:'The measured trend supports decreasing functional activity at higher temperatures.'}
+];
+let assessmentOrder=[];
+function shuffle(arr){let a=[...arr];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function renderAssessment(){
+ assessmentOrder=shuffle(assessmentBank);
+ document.getElementById('assessmentQuestions').innerHTML='<h3>Objective Questions — 17 marks</h3>'+assessmentOrder.map((q,i)=>`<div class="q"><b>${i+1}. ${q.q}</b>${q.a.map((a,j)=>`<label><input type="radio" name="assess_${q.id}" value="${j}"> ${String.fromCharCode(65+j)}. ${a}</label>`).join('')}</div>`).join('');
+}
+renderAssessment();
+function resetAssessment(){document.getElementById('assessmentQuestions').querySelectorAll('input').forEach(x=>x.checked=false);document.getElementById('finalFrq').value='';renderAssessment();showToast('Assessment reset and MCQ order reshuffled.')}
+
+function submitAssessment(){
+ const name=document.getElementById('studentName').value.trim(), sid=document.getElementById('studentId').value.trim(), cls=document.getElementById('studentClass').value.trim();
+ if(!name||!sid||!cls){showToast('Enter student name, ID, and class first.');return}
+ let answers={},correct=0,bySkill={},byLevel={};
+ assessmentBank.forEach(q=>{
+   const x=document.querySelector(`input[name="assess_${q.id}"]:checked`);
+   const val=x?Number(x.value):null,ok=val===q.c;
+   answers[q.id]={value:val,correct:ok};if(ok)correct++;
+   if(!bySkill[q.skill])bySkill[q.skill]={correct:0,total:0};bySkill[q.skill].total++;if(ok)bySkill[q.skill].correct++;
+   if(!byLevel[q.level])byLevel[q.level]={correct:0,total:0};byLevel[q.level].total++;if(ok)byLevel[q.level].correct++;
+ });
+ const attempt={
+  uid:Date.now().toString(36)+Math.random().toString(36).slice(2,7),name,id:sid,className:cls,
+  date:new Date().toISOString(),timeSpentSec:Math.max(1,Math.round((Date.now()-lessonStart)/1000)),
+  objectiveScore:correct,objectiveTotal:assessmentBank.length,frqMark:null,frqTotal:3,frqResponse:document.getElementById('finalFrq').value.trim(),
+  answers,bySkill,byLevel
+ };
+ let attempts=JSON.parse(localStorage.getItem('bioAttempts')||'[]');attempts.push(attempt);localStorage.setItem('bioAttempts',JSON.stringify(attempts));localStorage.setItem('bioLatest',attempt.uid);
+ visited.add('results');localStorage.setItem('bioVisited',JSON.stringify([...visited]));updateProgress();go('results');renderStudentResult();
+}
+
+function pct(n,d){return d?Math.round(n/d*100):0}
+function fmtTime(sec){let m=Math.floor(sec/60),s=sec%60;return `${m}m ${s}s`}
+function renderStudentResult(){
+ let attempts=JSON.parse(localStorage.getItem('bioAttempts')||'[]'),uid=localStorage.getItem('bioLatest'),a=attempts.find(x=>x.uid===uid)||attempts[attempts.length-1],el=document.getElementById('studentResult');
+ if(!a){el.innerHTML='<p>No submitted attempt yet.</p>';return}
+ const totalEarned=a.objectiveScore+(a.frqMark??0), totalPossible=a.objectiveTotal+a.frqTotal;
+ const provisional=a.frqMark===null;
+ const skillRows=Object.entries(a.bySkill).map(([k,v])=>`<tr><td>${k}</td><td>${pct(v.correct,v.total)}%</td></tr>`).join('');
+ const weak=Object.entries(a.bySkill).filter(([_,v])=>pct(v.correct,v.total)<70).map(([k])=>k);
+ const strong=Object.entries(a.bySkill).filter(([_,v])=>pct(v.correct,v.total)>=80).map(([k])=>k);
+ const wrong=assessmentBank.filter(q=>!a.answers[q.id]?.correct).map(q=>q.id+' ('+q.kpi+')');
+ el.innerHTML=`<div class="grid g3"><div class="metric"><span>Student</span><b>${esc(a.name)}</b><span>${esc(a.id)} · ${esc(a.className)}</span></div>
+ <div class="metric"><span>${provisional?'Provisional objective score':'Total score'}</span><b>${provisional?a.objectiveScore+'/'+a.objectiveTotal:totalEarned+'/'+totalPossible}</b><span>${provisional?pct(a.objectiveScore,a.objectiveTotal):pct(totalEarned,totalPossible)}%</span></div>
+ <div class="metric"><span>Time spent</span><b>${fmtTime(a.timeSpentSec)}</b><span>${new Date(a.date).toLocaleString()}</span></div></div>
+ ${provisional?'<div class="key" style="margin-top:14px"><b>FRQ pending:</b> Teacher review is worth 3 marks. The percentage shown is the automated objective score only.</div>':''}
+ <h3>Performance by skill</h3><div class="scroll"><table><tr><th>Skill</th><th>Performance</th></tr>${skillRows}</table></div>
+ <h3>Strengths</h3><p>${strong.length?strong.join(', '):'Keep building mastery across all skills.'}</p>
+ <h3>Areas for Improvement</h3><p>${weak.length?weak.join(', '):'No major weak skill area identified in the objective section.'}</p>
+ <h3>Recommended Revision</h3><p>${weak.includes('Data Analysis')?'Review Chargaff calculations and the AP data-analysis stimulus. ':''}${weak.includes('AP Reasoning')?'Review R-group chemistry, protein folding, and sequence → shape → function. ':''}${weak.includes('Application')?'Review 3′ OH directionality and DNA–RNA structural differences. ':''}${weak.includes('Knowledge & Recall')?'Review core vocabulary and structure tables. ':''}</p>
+ <h3>Questions to revisit</h3><p>${wrong.length?wrong.join(', '):'All objective questions correct.'}</p>`;
+}
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+// Teacher
+const TEACHER_PASSWORD='BIO2026';
+function teacherLogin(){
+ if(document.getElementById('teacherPassword').value===TEACHER_PASSWORD){
+  document.getElementById('teacherLogin').classList.add('hidden');document.getElementById('teacherDashboard').classList.remove('hidden');renderTeacher();
+ }else instantFeedback('teacherLoginFb',false,'Password not recognized.');
+}
+function renderTeacher(){
+ const attempts=JSON.parse(localStorage.getItem('bioAttempts')||'[]');
+ const metrics=document.getElementById('classMetrics'),table=document.getElementById('attemptTable'),qa=document.getElementById('questionAnalysis');
+ if(!attempts.length){metrics.innerHTML='<div class="card">No attempts stored yet.</div>';table.innerHTML='';qa.innerHTML='';return}
+ const totals=attempts.map(a=>a.objectiveScore+(a.frqMark??0)), poss=attempts.map(a=>a.objectiveTotal+a.frqTotal);
+ const percents=attempts.map((a,i)=>pct(totals[i],poss[i]-(a.frqMark===null?a.frqTotal:0)));
+ const sorted=[...percents].sort((a,b)=>a-b),median=sorted.length%2?sorted[(sorted.length-1)/2]:Math.round((sorted[sorted.length/2-1]+sorted[sorted.length/2])/2);
+ const avg=Math.round(percents.reduce((s,x)=>s+x,0)/percents.length);
+ metrics.innerHTML=`<div class="metric"><span>Class average</span><b>${avg}%</b></div><div class="metric"><span>Highest / Lowest</span><b>${Math.max(...percents)}% / ${Math.min(...percents)}%</b></div><div class="metric"><span>Median</span><b>${median}%</b></div>
+ <div class="metric"><span>≥80%</span><b>${pct(percents.filter(x=>x>=80).length,percents.length)}%</b></div><div class="metric"><span>60–79%</span><b>${pct(percents.filter(x=>x>=60&&x<80).length,percents.length)}%</b></div><div class="metric"><span>&lt;60%</span><b>${pct(percents.filter(x=>x<60).length,percents.length)}%</b></div>`;
+ table.innerHTML=`<table><tr><th>Student</th><th>ID</th><th>Class</th><th>Date</th><th>Time</th><th>Objective</th><th>FRQ /3</th><th>Total %</th><th>Foundation</th><th>Application</th><th>AP Reasoning</th><th>Main Weak Area</th><th>Action</th></tr>${attempts.map((a,idx)=>{
+   const pskill=Object.entries(a.bySkill).map(([k,v])=>[k,pct(v.correct,v.total)]),weak=[...pskill].sort((x,y)=>x[1]-y[1])[0]?.[0]||'—';
+   const finalPct=a.frqMark===null?pct(a.objectiveScore,a.objectiveTotal):pct(a.objectiveScore+a.frqMark,a.objectiveTotal+a.frqTotal);
+   return `<tr><td>${esc(a.name)}</td><td>${esc(a.id)}</td><td>${esc(a.className)}</td><td>${new Date(a.date).toLocaleDateString()}</td><td>${fmtTime(a.timeSpentSec)}</td><td>${a.objectiveScore}/${a.objectiveTotal}</td>
+   <td>${a.frqMark===null?`<input type="number" min="0" max="3" style="width:72px" id="frqmark_${idx}" placeholder="0–3">`:`${a.frqMark}/3`}</td><td>${finalPct}%</td>
+   <td>${levelPct(a,'Foundation')}%</td><td>${levelPct(a,'Application')}%</td><td>${levelPct(a,'AP Reasoning')}%</td><td>${weak}</td>
+   <td>${a.frqMark===null?`<button class="btn secondary" onclick="saveFrqMark(${idx})">Save FRQ</button>`:`<button class="btn ghost" onclick="viewAttempt(${idx})">View</button>`}</td></tr>`
+ }).join('')}</table>`;
+ qa.innerHTML=`<table><tr><th>Question</th><th>KPI</th><th>Level</th><th>Correct</th><th>Incorrect</th><th>% Correct</th></tr>${assessmentBank.map(q=>{let c=attempts.filter(a=>a.answers[q.id]?.correct).length,inc=attempts.length-c;return `<tr><td>${q.id}</td><td>${q.kpi}</td><td>${q.level}</td><td>${c}</td><td>${inc}</td><td>${pct(c,attempts.length)}%</td></tr>`}).join('')}</table>
+ <h4>Most Mastered Concepts</h4><p>${topConcepts(attempts,true)}</p><h4>Concepts Requiring Reteaching</h4><p>${topConcepts(attempts,false)}</p><h4>Most Difficult Questions</h4><p>${hardQs(attempts)}</p>`;
+}
+function levelPct(a,l){let v=a.byLevel[l];return v?pct(v.correct,v.total):0}
+function saveFrqMark(idx){
+ let attempts=JSON.parse(localStorage.getItem('bioAttempts')||'[]'),inp=document.getElementById('frqmark_'+idx),m=Number(inp.value);
+ if(!Number.isFinite(m)||m<0||m>3){showToast('Enter an FRQ mark from 0 to 3.');return}
+ attempts[idx].frqMark=m;localStorage.setItem('bioAttempts',JSON.stringify(attempts));renderTeacher();renderStudentResult();
+}
+function viewAttempt(idx){
+ let a=JSON.parse(localStorage.getItem('bioAttempts')||'[]')[idx];alert(`Student: ${a.name}\nFRQ mark: ${a.frqMark}/3\n\nFRQ response:\n${a.frqResponse||'(No response)'}`);
+}
+function topConcepts(attempts,best){
+ const stats={};
+ assessmentBank.forEach(q=>{if(!stats[q.kpi])stats[q.kpi]={c:0,t:0};attempts.forEach(a=>{stats[q.kpi].t++;if(a.answers[q.id]?.correct)stats[q.kpi].c++})});
+ return Object.entries(stats).sort((x,y)=>(best?-1:1)*(x[1].c/x[1].t-y[1].c/y[1].t)).slice(0,3).map(([k,v])=>`${k} (${pct(v.c,v.t)}%)`).join(', ');
+}
+function hardQs(attempts){return assessmentBank.map(q=>[q.id,pct(attempts.filter(a=>a.answers[q.id]?.correct).length,attempts.length)]).sort((a,b)=>a[1]-b[1]).slice(0,5).map(x=>`${x[0]} (${x[1]}%)`).join(', ')}
+function clearAttempts(){if(confirm('Delete all locally stored assessment attempts?')){localStorage.removeItem('bioAttempts');localStorage.removeItem('bioLatest');renderTeacher();renderStudentResult()}}
+function exportCSV(){
+ const attempts=JSON.parse(localStorage.getItem('bioAttempts')||'[]');
+ const headers=['Student','ID','Class','Date completed','Time spent (s)','Objective score','Objective total','FRQ mark','FRQ total','Final/Provisional %','Foundation %','Application %','AP Reasoning %','FRQ response'];
+ const rows=attempts.map(a=>[a.name,a.id,a.className,a.date,a.timeSpentSec,a.objectiveScore,a.objectiveTotal,a.frqMark??'',a.frqTotal,a.frqMark===null?pct(a.objectiveScore,a.objectiveTotal):pct(a.objectiveScore+a.frqMark,a.objectiveTotal+a.frqTotal),levelPct(a,'Foundation'),levelPct(a,'Application'),levelPct(a,'AP Reasoning'),a.frqResponse||'']);
+ const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='biological_macromolecules_results.csv';a.click();URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
